@@ -13,9 +13,9 @@ import math
 import os
 os.environ["CUDA_VISIBLE_DEVICES"]="-1" #disable Tensorflow GPU usage, these simple graphs run faster on CPU
 import tensorflow as tf
-from policy import Policy
-from critic import Critic
-from utils import Scaler
+from .policy import Policy
+from .critic import Critic
+from .utils import Scaler
 
 #Data structure for holding experience
 class Experience:
