@@ -3,7 +3,7 @@ import random
 import os
 os.environ["CUDA_VISIBLE_DEVICES"]="-1" #disable Tensorflow GPU usage, these simple graphs run faster on CPU
 import tensorflow as tf
-import MLP
+from . import MLP
 from collections import deque
 
 
