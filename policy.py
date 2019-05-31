@@ -48,7 +48,7 @@ class Policy:
         self.usedSigmaSumCounter=0
 
         #inputs
-        stateIn=tf.placeholder(dtype=tf.float32,shape=[None,stateDim],name="stateIn")
+        stateIn=tf.placeholder(dtype=tf.float32,shape=[None,stateDim],name="vector_observation")
         actionIn=tf.placeholder(dtype=tf.float32,shape=[None,actionDim],name="actionIn")    #training targets for policy network
         oldPolicyMean=tf.placeholder(dtype=tf.float32,shape=[None,actionDim],name="oldPolicyMeanIn")    #training targets for policy network
         self.oldPolicyMean=oldPolicyMean
@@ -184,6 +184,15 @@ class Policy:
         self.policyLogVar=policyLogVar
         self.policySigma=policySigma
         self.initialized=False  #remember that one has to call init() before training (can't call it here as TF globals might not have been initialized yet)
+        
+        # Unity compatibility
+        tf.identity(self.policyMean,     name='action')
+        tf.identity(self.policySigma,    name="value_estimate")
+        
+        tf.Variable(int(self.actionDim), name="action_output_shape",     trainable=False, dtype=tf.int32)
+        tf.Variable(int(True),           name='is_continuous_control',   trainable=False, dtype=tf.int32)
+        tf.Variable(int(2),              name='version_number',          trainable=False, dtype=tf.int32)
+        tf.Variable(int(0),              name="memory_size",             trainable=False, dtype=tf.int32)
 
     #init the policy with random Gaussian state samples, such that the network outputs the desired mean and sd
     def init(self,sess:tf.Session,stateMean:np.array,stateSd:np.array,actionMean:np.array,actionSd:np.array,nMinibatch:int=64,nBatches:int=4000,verbose=True):
