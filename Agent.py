@@ -270,12 +270,15 @@ class Agent:
             scale=1
  
         #Scale the observations for training the critic
-        scaledStates=self.scaler.process(allStates)
+        if self.useScaler:
+            trainStates=self.scaler.process(allStates)
+        else:
+            trainStates = allStates
 
         #Train critic
         def augmentCriticObs(obs:np.array,timeSteps:np.array):
             return np.concatenate([obs,timeSteps],axis=1)
-        self.critic.train(sess,augmentCriticObs(scaledStates,allTimes),allValues,batchSize,nEpochs=0,nBatches=nBatches,verbose=verbose)
+        self.critic.train(sess,augmentCriticObs(trainStates,allTimes),allValues,batchSize,nEpochs=0,nBatches=nBatches,verbose=verbose)
 
         #Policy training needs advantages, which depend on the critic we just trained.
         #We use Generalized Advantage Estimation by Schulman et al.
